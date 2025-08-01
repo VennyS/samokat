@@ -1,7 +1,9 @@
 package setting
 
 import (
+	"fmt"
 	"samokat/internal/lib/env"
+	"samokat/internal/lib/logger"
 	cfg "samokat/internal/setting/config"
 	"time"
 
@@ -34,5 +36,14 @@ func (a *App) Loadcfg() {
 			Name:     env.GetString("DB_NAME", "crocus"),
 			SSLMode:  env.GetString("DB_SSLMODE", "disable"),
 		},
+	}
+}
+
+func (a *App) SetupLogger() {
+	var err error
+	a.logger, err = logger.Init(a.cfg.AppEnv)
+
+	if err != nil {
+		panic(fmt.Sprintf("Failed to initialize logger: %v", err))
 	}
 }

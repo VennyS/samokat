@@ -1,0 +1,12 @@
+.cardWrapper {
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  p {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+  }
+  img {
+  }
+}

@@ -4,7 +4,7 @@ export type CardProps = {
   percentDiscount: string;
   title: string;
   weight: string;
-  oldPrice: string;
+  oldPrice?: string;
   newPrice: string;
   extraText?: string;
 };

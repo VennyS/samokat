@@ -5,9 +5,9 @@ services:
     image: postgis/postgis:15-3.3-alpine
     container_name: samokat_postgres
     environment:
-      POSTGRES_USER: samokat
-      POSTGRES_PASSWORD: samokatpass
-      POSTGRES_DB: samokatdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: samokat
     ports:
       - "5432:5432"
     volumes:

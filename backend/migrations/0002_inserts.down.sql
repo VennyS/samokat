@@ -1,0 +1,11 @@
+DELETE FROM product_collection_items;
+DELETE FROM product_collections;
+DELETE FROM stories;
+DELETE FROM promotions;
+DELETE FROM warehouse_stock;
+DELETE FROM product_images;
+DELETE FROM product_categories;
+DELETE FROM products;
+DELETE FROM warehouse_categories;
+DELETE FROM categories;
+DELETE FROM warehouses;

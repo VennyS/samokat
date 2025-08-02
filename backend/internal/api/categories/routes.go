@@ -18,7 +18,7 @@ func NewController(logger *zap.SugaredLogger, categoryService CategoriesService)
 }
 
 func (c CategoriesController) RegisterRoutes(r *chi.Mux) {
-	r.Route("v1/categories", func(r chi.Router) {
+	r.Route("/v1/categories", func(r chi.Router) {
 		r.Get("/{id}", c.GetAllByWareHouseIDHandler())
 	})
 }

@@ -39,7 +39,7 @@ func (a *App) LoadConfig() {
 			Port:     env.GetString("DB_PORT", "5432"),
 			User:     env.GetString("DB_USER", "postgres"),
 			Password: env.GetString("DB_PASSWORD", "postgres"),
-			Name:     env.GetString("DB_NAME", "crocus"),
+			Name:     env.GetString("DB_NAME", "samokat"),
 			SSLMode:  env.GetString("DB_SSLMODE", "disable"),
 		},
 	}

@@ -1,4 +1,4 @@
-export type CategoryCardProps = {
+export type Props = {
   href: string;
   img: string;
   title: string;

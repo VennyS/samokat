@@ -1,7 +1,7 @@
-import { CategoryCardProps } from "./types";
+import { Props } from "./types";
 import styles from "./CategoryCard.module.css";
 
-export const CategoryCard = ({ href, img, title }: CategoryCardProps) => {
+export const CategoryCard = ({ href, img, title }: Props) => {
   return (
     <a href={href}>
       <div className={styles.cardWrapper}>

@@ -1,4 +1,4 @@
-import { CardProps } from "./types";
+import { Props } from "./types";
 import styles from "./PriceCard.module.css";
 import Image from "next/image";
 import { PlusIcon } from "@/app/assets/icons/plus";
@@ -12,7 +12,7 @@ export const PriceCard = ({
   oldPrice,
   newPrice,
   extraText,
-}: CardProps) => {
+}: Props) => {
   return (
     <a href={href}>
       <div className={styles.cardWrapper}>

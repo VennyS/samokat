@@ -1,4 +1,4 @@
-export type CardProps = {
+export type Props = {
   href: string;
   img: string;
   percentDiscount: string;

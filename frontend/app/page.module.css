@@ -1,12 +1,1 @@
-.main {
-  padding: 16px;
-  display: flex;
-  flex-direction: row;
-  gap: 6px;
-}
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 6px;
-}

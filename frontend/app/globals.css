@@ -8,11 +8,13 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  padding: 0px 5px;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  background-color: var(--color-grey4);
+  /* color: var(--foreground);
+  background: var(--background); */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -26,4 +28,94 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+:root {
+  --color-primary: #ff335f;
+  --color-primaryHover: #f3345c;
+  --color-primaryPressed: #e62e55;
+
+  --color-softPrimary: #ffebef;
+  --color-softPrimaryHover: #ffe1e7;
+  --color-softPrimaryPressed: #ffd6df;
+
+  --color-blueGraphite: #5993a6;
+  --color-blueGraphiteHover: #508495;
+  --color-blueGraphitePressed: #477685;
+
+  --color-softBlueGraphite: #eaf3f6;
+  --color-softBlueGraphiteHover: #e1eef2;
+  --color-softBlueGraphitePressed: #dbebf0;
+
+  --color-dark: #404040;
+  --color-grey1: #595959;
+  --color-grey2: #a6a6a6;
+  --color-grey3: #e0e0e0;
+  --color-grey4: #f2f2f2;
+  --color-greyHover: #e8e8e8;
+  --color-banner-grey: #f8f8f8;
+  /* FIXME: привести цвет к одному из greyX цвету */
+  --color-grey-with-alpha: rgba(64, 64, 64, 0.15);
+
+  --color-dark-opacity-50: #40404080;
+  --color-dark-opacity-30: rgba(64, 64, 64, 0.3);
+
+  --color-black: #000000;
+  --color-white: #ffffff;
+
+  --color-sand: #edde9d;
+  --color-sun: #f1b98e;
+  --color-fire: #e2a49b;
+  --color-earth: #997375;
+  --color-stone: #9e96a9;
+  --color-air: #dce7e9;
+  --color-water: #94c2d2;
+  --color-grass: #5e9f89;
+  --color-forest: #16615d;
+
+  --color-blueGrey: #e3e7e8;
+  --color-dustyBlue: #8facbc;
+  --color-accentBlue: #6da3d4;
+
+  --color-addition-red: #ff3b30;
+  --color-addition-green: #00b749;
+}
+
+:root {
+  --rounding04: 4px;
+  --rounding08: 8px;
+  --rounding12: 12px;
+  --rounding16: 16px;
+  --rounding24: 24px;
+  --rounding32: 32px;
+  --rounding-full: 1000px;
+
+  --spacing02: 2px;
+  --spacing04: 4px;
+  --spacing06: 6px;
+  --spacing08: 8px;
+  --spacing12: 12px;
+  --spacing16: 16px;
+  --spacing20: 20px;
+  --spacing24: 24px;
+  --spacing32: 32px;
+  --spacing40: 40px;
+  --spacing48: 48px;
+  --spacing56: 56px;
+  --spacing64: 64px;
+
+  --size04: 4px;
+  --size08: 8px;
+  --size12: 12px;
+  --size16: 16px;
+  --size20: 20px;
+  --size24: 24px;
+  --size32: 32px;
+  --size40: 40px;
+  --size48: 48px;
+  --size56: 56px;
+  --size64: 64px;
+
+  --border01: 1px;
+  --border02: 2px;
 }

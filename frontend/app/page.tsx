@@ -1,6 +1,7 @@
 import styles from "./page.module.css";
 import { PriceCard } from "./components/PriceCard/PriceCard";
 import { CategoryCard } from "./components/CategoryCard/CategoryCard";
+import { DesktopHeader } from "./components/DesktopHeader/DesktopHeader";
 
 export default function Home() {
   return (
@@ -24,7 +25,7 @@ export default function Home() {
         oldPrice="749"
         newPrice="494"
       /> */}
-      <div className={styles.grid}>
+      {/* <div className={styles.grid}>
         <CategoryCard
           href="/product"
           img="https://cm.samokat.ru/processed/category/11594daf-86aa-4e0f-b623-5b2a2ad66d9e.jpg"
@@ -45,7 +46,8 @@ export default function Home() {
           img="https://cm.samokat.ru/processed/category/11594daf-86aa-4e0f-b623-5b2a2ad66d9e.jpg"
           title="Что на завтрак?"
         />
-      </div>
+      </div> */}
+      <DesktopHeader />
     </main>
   );
 }

@@ -19,13 +19,13 @@ func (c CategoriesController) GetAllByWareHouseIDHandler() http.HandlerFunc {
 
 		categories, err := c.categoryService.GetAllByWareHouseID(r.Context(), uuid.MustParse(warehouseID))
 		if err != nil {
-			logger.Error("Failed to get categories by warehouse ID", zap.Error(err))
+			logger.Errorf("Failed to get categories by warehouse ID: %v", err)
 			ht.SendMessage(w, r, "Failed to get categories", http.StatusInternalServerError)
 			return
 		}
 
 		if len(categories) == 0 {
-			logger.Info("No categories found for warehouse ID", zap.String("warehouse_id", warehouseID))
+			logger.Infof("No categories found for warehouse ID: %s", warehouseID)
 			ht.SendMessage(w, r, "No categories found", http.StatusNotFound)
 			return
 		}

@@ -14,11 +14,11 @@ type CategoryRepository interface {
 }
 
 type categoryRepo struct {
-	logger *zap.Logger
+	logger *zap.SugaredLogger
 	db     *sqlx.DB
 }
 
-func NewCategoryRepo(logger *zap.Logger, db *sqlx.DB) *categoryRepo {
+func NewCategoryRepo(logger *zap.SugaredLogger, db *sqlx.DB) *categoryRepo {
 	return &categoryRepo{
 		logger: logger,
 		db:     db,
@@ -42,7 +42,7 @@ func (r *categoryRepo) GetAllByWareHouseID(ctx context.Context, warehouseID uuid
 	`
 
 	if err := r.db.SelectContext(ctx, &categories, query, warehouseID); err != nil {
-		r.logger.Error("Failed to get categories by warehouse ID", zap.Error(err))
+		r.logger.Errorf("Failed to get categories by warehouse ID: %v", err)
 		return nil, err
 	}
 	return categories, nil

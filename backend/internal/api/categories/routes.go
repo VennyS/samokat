@@ -6,11 +6,11 @@ import (
 )
 
 type CategoriesController struct {
-	logger          *zap.Logger
+	logger          *zap.SugaredLogger
 	categoryService CategoriesService
 }
 
-func NewController(logger *zap.Logger, categoryService CategoriesService) *CategoriesController {
+func NewController(logger *zap.SugaredLogger, categoryService CategoriesService) *CategoriesController {
 	return &CategoriesController{
 		logger:          logger,
 		categoryService: categoryService,

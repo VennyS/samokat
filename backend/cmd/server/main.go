@@ -1,7 +1,8 @@
 package main
 
-import "fmt"
+import "samokat/internal/setting"
 
 func main() {
-	fmt.Println("Hello, World!")
+	app := setting.App{}
+	app.InitApp()
 }

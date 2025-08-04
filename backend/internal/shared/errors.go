@@ -21,4 +21,5 @@ func NewHttpError(err string, statusCode int) *HttpError {
 var (
 	InternalError      = NewHttpError("internal server error", http.StatusInternalServerError)
 	InvalidCredentials = NewHttpError("invalid credentials", http.StatusUnauthorized)
+	NotFoundError      = NewHttpError("not found", http.StatusNotFound)
 )

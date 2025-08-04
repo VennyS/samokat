@@ -2,6 +2,7 @@ package categories
 
 import (
 	"context"
+	"errors"
 	"samokat/internal/shared"
 	"samokat/internal/shared/dto"
 	"samokat/internal/storage"
@@ -14,6 +15,7 @@ import (
 type CategoriesService interface {
 	GetAllByWareHouseID(ctx context.Context, warehouseID uuid.UUID) ([]*dto.CategoryDTO, error)
 	Create(ctx context.Context, category *dto.CreateCategoryDTO) (*dto.CategoryDTO, error)
+	Delete(ctx context.Context, id uuid.UUID) error
 }
 
 type categoriesSrv struct {
@@ -56,6 +58,25 @@ func (s *categoriesSrv) Create(ctx context.Context, category *dto.CreateCategory
 		return nil, shared.InternalError
 	}
 	return mapCategoryToDTO(newCategory), nil
+}
+
+func (s *categoriesSrv) Delete(ctx context.Context, id uuid.UUID) error {
+	logger := s.logger.With(
+		zap.String("method", "service.Delete"),
+		zap.String("category_id", id.String()),
+	)
+	logger.Info("Deleting category")
+
+	if err := s.categoryRepo.Delete(ctx, id); err != nil {
+		if errors.Is(err, repository.ErrNotFound) {
+			logger.Warnf("Category not found for deletion: %v", err)
+			return shared.NotFoundError
+		}
+
+		logger.Errorf("Failed to delete category: %v", err)
+		return shared.InternalError
+	}
+	return nil
 }
 
 // mapCategoryToDTO maps a storage.Category to a dto.CategoryDTO.

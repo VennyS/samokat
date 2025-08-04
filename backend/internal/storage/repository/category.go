@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"samokat/internal/shared/dto"
 	"samokat/internal/storage"
 
@@ -10,9 +12,14 @@ import (
 	"go.uber.org/zap"
 )
 
+var (
+	ErrNotFound = errors.New("not found")
+)
+
 type CategoryRepository interface {
 	GetAllByWareHouseID(ctx context.Context, warehouseID uuid.UUID) ([]*storage.Category, error)
 	Create(ctx context.Context, category *dto.CreateCategoryDTO) (*storage.Category, error)
+	Delete(ctx context.Context, id uuid.UUID) error
 }
 
 type categoryRepo struct {
@@ -67,4 +74,28 @@ func (r *categoryRepo) Create(ctx context.Context, category *dto.CreateCategoryD
 		return nil, err
 	}
 	return &newCategory, nil
+}
+
+func (r *categoryRepo) Delete(ctx context.Context, id uuid.UUID) error {
+	logger := r.logger.With(
+		zap.String("method", "repository.Delete"),
+		zap.String("category_id", id.String()),
+	)
+	logger.Info("Deleting category")
+
+	query := `
+		DELETE FROM categories
+		WHERE id = $1
+	`
+
+	if _, err := r.db.ExecContext(ctx, query, id); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			logger.Warnf("Category not found for deletion: %v", err)
+			return ErrNotFound
+		}
+
+		logger.Errorf("Failed to delete category: %v", err)
+		return err
+	}
+	return nil
 }

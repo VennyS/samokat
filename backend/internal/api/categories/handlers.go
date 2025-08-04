@@ -40,13 +40,44 @@ func (c CategoriesController) CreateHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req := r.Context().Value(middleware.DataKey).(*dto.CreateCategoryDTO)
 
+		logger := c.logger.With(
+			zap.String("method", "categoriesController.CreateHandler"),
+			zap.String("category_name", req.Name),
+		)
+
 		newCategory, err := c.categoryService.Create(r.Context(), req)
 		if err != nil {
-			c.logger.Errorf("Failed to create category: %v", err)
+			logger.Errorf("Failed to create category: %v", err)
 			ht.SendMessage(w, r, "Failed to create category", http.StatusInternalServerError)
 			return
 		}
 
 		ht.SendJSON(w, r, map[string]any{"category": newCategory}, http.StatusCreated)
+	}
+}
+
+func (c CategoriesController) DeleteHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		idStr := chi.URLParam(r, "id")
+		logger := c.logger.With(
+			zap.String("method", "categoriesController.DeleteHandler"),
+			zap.String("category_id", idStr),
+		)
+
+		id, err := uuid.Parse(idStr)
+		if err != nil {
+			logger.Errorf("Invalid category ID: %v", err)
+			ht.SendMessage(w, r, "Invalid category ID", http.StatusBadRequest)
+			return
+		}
+
+		if err := c.categoryService.Delete(r.Context(), id); err != nil {
+			logger.Errorf("Failed to delete category: %v", err)
+			ht.SendMessage(w, r, "Failed to delete category", http.StatusInternalServerError)
+			return
+		}
+
+		ht.SendMessage(w, r, "Category deleted successfully", http.StatusOK)
 	}
 }

@@ -24,5 +24,6 @@ func (c CategoriesController) RegisterRoutes(r *chi.Mux) {
 	r.Route("/v1/categories", func(r chi.Router) {
 		r.Get("/{id}", c.GetAllByWareHouseIDHandler())
 		r.With(middleware.JsonBodyMiddleware[*dto.CreateCategoryDTO](c.logger)).Post("/", (c.CreateHandler()))
+		r.Delete("/{id}", c.DeleteHandler())
 	})
 }

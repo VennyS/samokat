@@ -1,6 +1,9 @@
 package categories
 
 import (
+	"samokat/internal/api/middleware"
+	"samokat/internal/shared/dto"
+
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
 )
@@ -20,5 +23,8 @@ func NewController(logger *zap.SugaredLogger, categoryService CategoriesService)
 func (c CategoriesController) RegisterRoutes(r *chi.Mux) {
 	r.Route("/v1/categories", func(r chi.Router) {
 		r.Get("/{id}", c.GetAllByWareHouseIDHandler())
+		r.With(middleware.JsonBodyMiddleware[*dto.CreateCategoryDTO](c.logger)).Post("/", (c.CreateHandler()))
+		r.Delete("/{id}", c.DeleteHandler())
+		r.With(middleware.JsonBodyMiddleware[*dto.UpdateCategoryDTO](c.logger)).Put("/{id}", c.PutHandler())
 	})
 }

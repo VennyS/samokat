@@ -13,7 +13,8 @@ import (
 )
 
 var (
-	ErrNotFound = errors.New("not found")
+	ErrNotFound       = errors.New("not found")
+	ErrParentNotFound = errors.New("parent did not exists")
 )
 
 type CategoryRepository interface {
@@ -64,12 +65,27 @@ func (r *categoryRepo) Create(ctx context.Context, category *dto.CreateCategoryD
 		zap.String("category_name", category.Name),
 	)
 	logger.Info("Creating new category")
+
+	if category.ParentID != nil {
+		var exists bool
+		err := r.db.GetContext(ctx, &exists, `SELECT EXISTS(SELECT 1 FROM categories WHERE id = $1)`, *category.ParentID)
+		if err != nil {
+			logger.Errorf("Failed to check parent category: %v", err)
+			return nil, err
+		}
+		if !exists {
+			return nil, ErrParentNotFound
+		}
+	}
+
 	query := `
 		INSERT INTO categories (name, image_url, parent_id)
-		VALUES ($1, $2, $3) RETURNING id, name, image_url, parent_id
+		VALUES ($1, $2, $3)
+		RETURNING id, name, image_url, parent_id
 	`
 	var newCategory storage.Category
-	err := r.db.QueryRowContext(ctx, query, category.Name, category.ImageURL, category.ParentID).Scan(&newCategory.ID, &newCategory.Name, &newCategory.ImageURL, &newCategory.ParentID)
+	err := r.db.QueryRowContext(ctx, query, category.Name, category.ImageURL, category.ParentID).
+		Scan(&newCategory.ID, &newCategory.Name, &newCategory.ImageURL, &newCategory.ParentID)
 	if err != nil {
 		logger.Errorf("Failed to create category: %v", err)
 		return nil, err
@@ -107,6 +123,18 @@ func (r *categoryRepo) Put(ctx context.Context, categoryID uuid.UUID, category *
 		zap.String("category_name", *category.Name),
 	)
 	logger.Info("Updating category")
+
+	if category.ParentID != nil {
+		var exists bool
+		err := r.db.GetContext(ctx, &exists, `SELECT EXISTS(SELECT 1 FROM categories WHERE id = $1)`, *category.ParentID)
+		if err != nil {
+			logger.Errorf("Failed to check parent category: %v", err)
+			return nil, err
+		}
+		if !exists {
+			return nil, ErrParentNotFound
+		}
+	}
 
 	var updatedCategory storage.Category
 	query := `

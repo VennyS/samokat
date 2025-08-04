@@ -1,6 +1,7 @@
 package categories
 
 import (
+	"errors"
 	"net/http"
 	"samokat/internal/api/middleware"
 	ht "samokat/internal/lib/http"
@@ -45,9 +46,13 @@ func (c CategoriesController) CreateHandler() http.HandlerFunc {
 			zap.String("category_name", req.Name),
 		)
 
-		newCategory, err := c.categoryService.Create(r.Context(), req)
-		if err != nil {
-			logger.Errorf("Failed to create category: %v", err)
+		newCategory, hErr := c.categoryService.Create(r.Context(), req)
+		if hErr != nil {
+			logger.Errorf("Failed to create category: %v", hErr)
+			if errors.Is(hErr, ErrParentNotFound) {
+				ht.SendMessage(w, r, hErr.Error(), hErr.StatusCode)
+				return
+			}
 			ht.SendMessage(w, r, "Failed to create category", http.StatusInternalServerError)
 			return
 		}
@@ -103,10 +108,14 @@ func (c CategoriesController) PutHandler() http.HandlerFunc {
 			return
 		}
 
-		updatedCategory, err := c.categoryService.Put(r.Context(), id, updateReq)
-		if err != nil {
-			logger.Errorf("Failed to update category: %v", err)
-			ht.SendMessage(w, r, "Failed to update category", http.StatusInternalServerError)
+		updatedCategory, hErr := c.categoryService.Put(r.Context(), id, updateReq)
+		if hErr != nil {
+			logger.Errorf("Failed to create category: %v", hErr)
+			if errors.Is(hErr, ErrParentNotFound) {
+				ht.SendMessage(w, r, hErr.Error(), hErr.StatusCode)
+				return
+			}
+			ht.SendMessage(w, r, "Failed to create category", http.StatusInternalServerError)
 			return
 		}
 

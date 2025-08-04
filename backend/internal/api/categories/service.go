@@ -3,6 +3,7 @@ package categories
 import (
 	"context"
 	"errors"
+	"net/http"
 	"samokat/internal/shared"
 	"samokat/internal/shared/dto"
 	"samokat/internal/storage"
@@ -12,11 +13,15 @@ import (
 	"go.uber.org/zap"
 )
 
+var (
+	ErrParentNotFound = shared.NewHttpError("parent did not exists", http.StatusNotFound)
+)
+
 type CategoriesService interface {
 	GetAllByWareHouseID(ctx context.Context, warehouseID uuid.UUID) ([]*dto.CategoryDTO, error)
-	Create(ctx context.Context, category *dto.CreateCategoryDTO) (*dto.CategoryDTO, error)
+	Create(ctx context.Context, category *dto.CreateCategoryDTO) (*dto.CategoryDTO, *shared.HttpError)
 	Delete(ctx context.Context, id uuid.UUID) error
-	Put(ctx context.Context, categoryID uuid.UUID, category *dto.UpdateCategoryDTO) (*dto.CategoryDTO, error)
+	Put(ctx context.Context, categoryID uuid.UUID, category *dto.UpdateCategoryDTO) (*dto.CategoryDTO, *shared.HttpError)
 }
 
 type categoriesSrv struct {
@@ -46,7 +51,7 @@ func (s *categoriesSrv) GetAllByWareHouseID(ctx context.Context, warehouseID uui
 	return mapCategoriesToDTO(cats), nil
 }
 
-func (s *categoriesSrv) Create(ctx context.Context, category *dto.CreateCategoryDTO) (*dto.CategoryDTO, error) {
+func (s *categoriesSrv) Create(ctx context.Context, category *dto.CreateCategoryDTO) (*dto.CategoryDTO, *shared.HttpError) {
 	logger := s.logger.With(
 		zap.String("method", "service.Create"),
 		zap.String("category_name", category.Name),
@@ -55,6 +60,11 @@ func (s *categoriesSrv) Create(ctx context.Context, category *dto.CreateCategory
 
 	newCategory, err := s.categoryRepo.Create(ctx, category)
 	if err != nil {
+		if errors.Is(err, repository.ErrParentNotFound) {
+			logger.Warnf("Parent not found: %v", category.ParentID.String())
+			return nil, ErrParentNotFound
+		}
+
 		logger.Errorf("Failed to create category: %v", err)
 		return nil, shared.InternalError
 	}
@@ -80,7 +90,7 @@ func (s *categoriesSrv) Delete(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
-func (s *categoriesSrv) Put(ctx context.Context, categoryID uuid.UUID, category *dto.UpdateCategoryDTO) (*dto.CategoryDTO, error) {
+func (s *categoriesSrv) Put(ctx context.Context, categoryID uuid.UUID, category *dto.UpdateCategoryDTO) (*dto.CategoryDTO, *shared.HttpError) {
 	logger := s.logger.With(
 		zap.String("method", "service.Update"),
 		zap.String("category_id", categoryID.String()),
@@ -89,6 +99,11 @@ func (s *categoriesSrv) Put(ctx context.Context, categoryID uuid.UUID, category 
 
 	updatedCategory, err := s.categoryRepo.Put(ctx, categoryID, category)
 	if err != nil {
+		if errors.Is(err, repository.ErrParentNotFound) {
+			logger.Warnf("Parent not found: %v", category.ParentID.String())
+			return nil, ErrParentNotFound
+		}
+
 		logger.Errorf("Failed to update category: %v", err)
 		return nil, shared.InternalError
 	}

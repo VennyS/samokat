@@ -81,3 +81,35 @@ func (c CategoriesController) DeleteHandler() http.HandlerFunc {
 		ht.SendMessage(w, r, "Category deleted successfully", http.StatusOK)
 	}
 }
+
+func (c CategoriesController) PutHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		updateReq := r.Context().Value(middleware.DataKey).(*dto.UpdateCategoryDTO)
+		idStr := chi.URLParam(r, "id")
+		logger := c.logger.With(
+			zap.String("method", "categoriesController.PutHandler"),
+			zap.String("category_id", idStr),
+		)
+
+		if updateReq.Name == nil && updateReq.ImageURL == nil && updateReq.ParentID == nil {
+			ht.SendMessage(w, r, "No fields to update", http.StatusBadRequest)
+			return
+		}
+
+		id, err := uuid.Parse(idStr)
+		if err != nil {
+			logger.Errorf("Invalid category ID: %v", err)
+			ht.SendMessage(w, r, "Invalid category ID", http.StatusBadRequest)
+			return
+		}
+
+		updatedCategory, err := c.categoryService.Put(r.Context(), id, updateReq)
+		if err != nil {
+			logger.Errorf("Failed to update category: %v", err)
+			ht.SendMessage(w, r, "Failed to update category", http.StatusInternalServerError)
+			return
+		}
+
+		ht.SendJSON(w, r, map[string]any{"category": updatedCategory}, http.StatusOK)
+	}
+}

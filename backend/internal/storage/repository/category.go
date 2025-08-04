@@ -20,6 +20,7 @@ type CategoryRepository interface {
 	GetAllByWareHouseID(ctx context.Context, warehouseID uuid.UUID) ([]*storage.Category, error)
 	Create(ctx context.Context, category *dto.CreateCategoryDTO) (*storage.Category, error)
 	Delete(ctx context.Context, id uuid.UUID) error
+	Put(ctx context.Context, categoryID uuid.UUID, category *dto.UpdateCategoryDTO) (*storage.Category, error)
 }
 
 type categoryRepo struct {
@@ -98,4 +99,28 @@ func (r *categoryRepo) Delete(ctx context.Context, id uuid.UUID) error {
 		return err
 	}
 	return nil
+}
+
+func (r *categoryRepo) Put(ctx context.Context, categoryID uuid.UUID, category *dto.UpdateCategoryDTO) (*storage.Category, error) {
+	logger := r.logger.With(
+		zap.String("method", "repository.Put"),
+		zap.String("category_name", *category.Name),
+	)
+	logger.Info("Updating category")
+
+	var updatedCategory storage.Category
+	query := `
+		UPDATE categories
+		SET name = COALESCE($1, name),
+			image_url = COALESCE($2, image_url),
+			parent_id = COALESCE($3, parent_id)
+		WHERE id = $4
+		RETURNING id, name, image_url, parent_id
+	`
+	err := r.db.QueryRowContext(ctx, query, category.Name, category.ImageURL, category.ParentID, categoryID).Scan(&updatedCategory.ID, &updatedCategory.Name, &updatedCategory.ImageURL, &updatedCategory.ParentID)
+	if err != nil {
+		logger.Errorf("Failed to update category: %v", err)
+		return nil, err
+	}
+	return &updatedCategory, nil
 }

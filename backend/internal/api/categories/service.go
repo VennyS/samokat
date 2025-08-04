@@ -16,6 +16,7 @@ type CategoriesService interface {
 	GetAllByWareHouseID(ctx context.Context, warehouseID uuid.UUID) ([]*dto.CategoryDTO, error)
 	Create(ctx context.Context, category *dto.CreateCategoryDTO) (*dto.CategoryDTO, error)
 	Delete(ctx context.Context, id uuid.UUID) error
+	Put(ctx context.Context, categoryID uuid.UUID, category *dto.UpdateCategoryDTO) (*dto.CategoryDTO, error)
 }
 
 type categoriesSrv struct {
@@ -77,6 +78,21 @@ func (s *categoriesSrv) Delete(ctx context.Context, id uuid.UUID) error {
 		return shared.InternalError
 	}
 	return nil
+}
+
+func (s *categoriesSrv) Put(ctx context.Context, categoryID uuid.UUID, category *dto.UpdateCategoryDTO) (*dto.CategoryDTO, error) {
+	logger := s.logger.With(
+		zap.String("method", "service.Update"),
+		zap.String("category_id", categoryID.String()),
+	)
+	logger.Info("Updating category")
+
+	updatedCategory, err := s.categoryRepo.Put(ctx, categoryID, category)
+	if err != nil {
+		logger.Errorf("Failed to update category: %v", err)
+		return nil, shared.InternalError
+	}
+	return mapCategoryToDTO(updatedCategory), nil
 }
 
 // mapCategoryToDTO maps a storage.Category to a dto.CategoryDTO.

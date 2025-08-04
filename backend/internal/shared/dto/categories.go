@@ -14,3 +14,9 @@ type CreateCategoryDTO struct {
 	ImageURL string     `json:"image_url" validate:"required,url"`
 	ParentID *uuid.UUID `json:"parent_id,omitempty" validate:"uuid"`
 }
+
+type UpdateCategoryDTO struct {
+	Name     *string    `json:"name,omitempty" validate:"omitempty"`
+	ImageURL *string    `json:"image_url,omitempty" validate:"omitempty,url"`
+	ParentID *uuid.UUID `json:"parent_id,omitempty" validate:"omitempty,uuid"`
+}

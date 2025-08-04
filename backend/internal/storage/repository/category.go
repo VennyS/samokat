@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"samokat/internal/shared/dto"
 	"samokat/internal/storage"
 
 	"github.com/google/uuid"
@@ -11,6 +12,7 @@ import (
 
 type CategoryRepository interface {
 	GetAllByWareHouseID(ctx context.Context, warehouseID uuid.UUID) ([]*storage.Category, error)
+	Create(ctx context.Context, category *dto.CreateCategoryDTO) (*storage.Category, error)
 }
 
 type categoryRepo struct {
@@ -46,4 +48,23 @@ func (r *categoryRepo) GetAllByWareHouseID(ctx context.Context, warehouseID uuid
 		return nil, err
 	}
 	return categories, nil
+}
+
+func (r *categoryRepo) Create(ctx context.Context, category *dto.CreateCategoryDTO) (*storage.Category, error) {
+	logger := r.logger.With(
+		zap.String("method", "repository.Create"),
+		zap.String("category_name", category.Name),
+	)
+	logger.Info("Creating new category")
+	query := `
+		INSERT INTO categories (name, image_url, parent_id)
+		VALUES ($1, $2, $3) RETURNING id, name, image_url, parent_id
+	`
+	var newCategory storage.Category
+	err := r.db.QueryRowContext(ctx, query, category.Name, category.ImageURL, category.ParentID).Scan(&newCategory.ID, &newCategory.Name, &newCategory.ImageURL, &newCategory.ParentID)
+	if err != nil {
+		logger.Errorf("Failed to create category: %v", err)
+		return nil, err
+	}
+	return &newCategory, nil
 }

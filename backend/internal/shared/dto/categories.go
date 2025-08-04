@@ -8,3 +8,9 @@ type CategoryDTO struct {
 	ImageURL string         `json:"image_url"`
 	Children []*CategoryDTO `json:"children,omitempty"`
 }
+
+type CreateCategoryDTO struct {
+	Name     string     `json:"name" validate:"required"`
+	ImageURL string     `json:"image_url" validate:"required,url"`
+	ParentID *uuid.UUID `json:"parent_id,omitempty" validate:"uuid"`
+}

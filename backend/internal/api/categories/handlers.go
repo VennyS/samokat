@@ -2,7 +2,9 @@ package categories
 
 import (
 	"net/http"
+	"samokat/internal/api/middleware"
 	ht "samokat/internal/lib/http"
+	"samokat/internal/shared/dto"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -31,5 +33,20 @@ func (c CategoriesController) GetAllByWareHouseIDHandler() http.HandlerFunc {
 		}
 
 		ht.SendJSON(w, r, map[string]any{"categories": categories}, http.StatusOK)
+	}
+}
+
+func (c CategoriesController) CreateHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		req := r.Context().Value(middleware.DataKey).(*dto.CreateCategoryDTO)
+
+		newCategory, err := c.categoryService.Create(r.Context(), req)
+		if err != nil {
+			c.logger.Errorf("Failed to create category: %v", err)
+			ht.SendMessage(w, r, "Failed to create category", http.StatusInternalServerError)
+			return
+		}
+
+		ht.SendJSON(w, r, map[string]any{"category": newCategory}, http.StatusCreated)
 	}
 }

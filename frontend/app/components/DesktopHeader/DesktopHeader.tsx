@@ -2,7 +2,8 @@ import NextLink from "next/link";
 import NextImage from "next/image";
 import { SearchField } from "../SearchField/SearchField";
 import styles from "./DesktopHeader.module.css";
-import { HeaderButton } from "@/app/HeaderButton/HeaderButton";
+import { LoginButton } from "@/app/LoginButton/LoginButton";
+import { ChatButton } from "../ChatButton/ChatButton";
 
 export const DesktopHeader = () => {
   return (
@@ -19,7 +20,10 @@ export const DesktopHeader = () => {
         classname={styles.searchfield}
         placeholder="Искать в Самокатe"
       />
-      <HeaderButton title="Войти" icon="/profile.png" />
+      <div className={styles.rightButtons}>
+        <LoginButton />
+        <ChatButton />
+      </div>
     </header>
   );
 };

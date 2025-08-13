@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export const SearchField = ({ placeholder, classname }: Props) => {
   return (
-    <div className={styles.root}>
+    <div className={styles.searchDiv}>
       <input
         type="text"
         placeholder={placeholder}

@@ -1,5 +1,5 @@
 .logo {
-  margin-right: 80px;
+  margin-right: 61px;
 }
 
 .header {
@@ -7,11 +7,19 @@
   flex-direction: row;
   padding: 16px 10px;
   gap: 10px;
-  height: 48px;
-  width: 100%;
+  width: calc(100% - 10px - 10px);
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   background-color: var(--color-white);
+  border-radius: 0 0 32px 32px;
+}
+
+.rightButtons {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  justify-content: space-between;
+  min-width: 325px;
 }
